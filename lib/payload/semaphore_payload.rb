@@ -44,7 +44,14 @@ class SemaphorePayload < Payload
   private
 
   def extract_builds_if_build_history_url(result)
-    result.first.key?("builds") ? result.first["builds"].first(15) : result
+    result.first.key?("builds") ? pre_process_add_branch_name(result) : result
+  end
+
+  def pre_process_add_branch_name(result)
+    result.first['builds'].first(15).map do |build|
+      build['branch_name'] = result.first['branch_name']
+      build
+    end
   end
 
   def specified_branch?(content)
